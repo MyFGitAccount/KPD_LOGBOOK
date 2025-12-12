@@ -2,8 +2,8 @@
 
 **Logbook Version:** 1.0  
 **Project Title:** EFS (Education Facilitation System) - A web-based learning platform with course management, account creation, admin panel, forum integration, PDF analyzer (EIS), and a timetable planner for HKU SPACE students.  
-**Team Members:** [Assuming solo or group; not specified in files]  
-**Date Started:** December 12, 2025 (based on query date; adjust as needed)  
+**Team Members:** Young Ho Tim,Kwok Ho Yin 
+**Date Started:** Septembere 1, 2025 
 **Current Status:** Development phase; backend with Node.js/Express/MongoDB, frontend with static HTML/JS/CSS, auxiliary Python scripts for data extraction.  
 
 This logbook serves as a comprehensive technical record of the project's evolution. It documents decisions, rationales, experiments, issues, and resolutions to ensure full reproducibility. If any team member needs to recreate the project, this logbook combined with the source files and final report (if any) should suffice. Entries are organized thematically rather than chronologically for clarity, with timestamps where relevant.
@@ -21,7 +21,7 @@ The core problem this project addresses is the chaos and inefficiency students f
 
 This project solves these by providing:
 - A **timetable planner** (calendar.html/js) that allows drag-and-drop class scheduling from a searchable list, with visual conflict detection and PNG export.
-- A **learning platform** for course viewing/editing, account management, admin approvals, forum integration, and PDF analysis (e.g., EIS for summarizing documents).
+- A **learning platform** for course viewing/editing, account management, admin approvals.
 - Integration with extracted course data from PDFs, making scheduling dynamic and data-driven.
 
 **Evolving Understanding:** Initially, the focus was on timetable planning alone, but it expanded to a full platform after realizing scheduling ties into course management (e.g., viewing materials, timetables per course).
@@ -35,7 +35,7 @@ This project solves these by providing:
     - Export uses html2canvas, which may fail on large calendars due to canvas size limits in browsers.
   - **Trade-offs:**
     - Static JS array vs. Database: Chose static for simplicity and speed (no DB queries), but trades off scalability. For 1000+ courses, DB would be better but adds latency/complexity.
-    - FullCalendar vs. Custom Grid: FullCalendar handles dragging/resizing out-of-box, but it's a heavy dependency (增加了 bundle size ~200KB).
+    - FullCalendar vs. Custom Grid: FullCalendar handles dragging/resizing out-of-box, but it's a heavy dependency (increase bundle size ~200KB).
   - **Better Alternatives Considered/Rejected:**
     - **Google Calendar Integration:** Rejected due to privacy concerns (student data syncing) and dependency on external APIs (potential downtime).
     - **Server-Side Rendering:** Could use Node to generate SVG timetables, but increases server load; client-side is faster for users.
@@ -47,10 +47,7 @@ This project solves these by providing:
   - **Trade-offs:** Embedded JS in HTML vs. SPA: Simpler setup, but harder to maintain large UIs.
   - **Alternatives:** Full MERN (with React) for dynamic UIs, but rejected for overkill in a prototype.
 
-- **PDF Analyzer (eis-viewer.html):** Uses PDF.js for rendering, OpenAI for summaries (optional). Heuristic fallback if no API key.
-  - **Trade-offs:** Client-side processing vs. Server: Client avoids server load but risks large PDFs crashing browsers.
-
-- **Admin Panel (admin.html):** Table-based UI for approving courses/accounts.
+  - **Admin Panel (admin.html):** Table-based UI for approving courses/accounts.
   - **Trade-offs:** Simple fetch API vs. WebSockets: No real-time updates, but sufficient for low-traffic admins.
 
 **Overall Task Breakdown and Planning:**
@@ -171,13 +168,12 @@ To reproduce the setup:
 - **loadCourses() in calendar.js (Line ~50):** Filters/searches courses. **Why:** Dynamic search. **Features:** Debounce, regex-insensitive. **Reproduce:** Input event, filter array, append DOM.
 - **makeCoursesDraggable() in calendar.js (Line ~100):** Enables drag. **Why:** Core planner feature. **Features:** FullCalendar Draggable. **Reproduce:** New Draggable instance; eventData callback.
 - **export-btn Handler in calendar.js (Line ~200):** PNG export. **Why:** Shareable output. **Features:** html2canvas with scaling. **Reproduce:** Temp styles, canvas.toDataURL, restore.
-- **scanBtn Handler in eis-viewer.html (Embedded JS):** Processes PDFs. **Why:** Summarize uploads. **Features:** PDF.js extract, OpenAI/heuristic. **Reproduce:** Promise.all for multi-file, fetch to OpenAI.
 - **loadCourse() in course-viewer.html (Embedded JS):** Fetches course data. **Why:** Dynamic viewing. **Features:** Tab rendering. **Reproduce:** Fetch APIs, innerHTML updates.
 - **approveAccount() in admin.html (Embedded JS):** POST approval. **Why:** Admin workflow. **Features:** Confirm dialog. **Reproduce:** Async fetch, reload table.
 
 ### 5.3 Python Scripts
 - **Main Loop in ext.py:** Parses PDF lines. **Why:** Data extraction. **Features:** Regex for codes/times. **Reproduce:** fitz.open, get_text("text"), regex matches.
-- **Main in ext2_1.py:** Extracts weekdays. **Why:** PDF layout fix. **Features:** Word grouping by Y. **Reproduce:** get_text("words"), sort by X.
+- **Main in ext2.py:** Extracts weekdays. **Why:** PDF layout fix. **Features:** Word grouping by Y. **Reproduce:** get_text("words"), sort by X.
 - **Main in merge.py:** Combines with weekdays. **Why:** Accurate merging. **Features:** Index-based assignment. **Reproduce:** Load txt, align with PDF rows.
 
 **Decision:** Functions modular for reuse; async for non-blocking.
